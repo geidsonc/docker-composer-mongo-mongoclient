@@ -1,0 +1,32 @@
+version: '3.1'
+
+services:
+
+  mongo:
+    image: mongo:${VERSION}
+    ports:
+      - ${MONGO_EXTERNAL_PORT}:27017
+    networks:
+      - mongo-network
+    volumes:
+      - dbmongo:/data/db
+
+  mongoclient:
+    image: mongoclient/mongoclient
+    ports:
+      - ${MONGOCLIENT_EXTERNAL_PORT}:3000
+    environment:
+      MONGO_URL: mongodb://mongo:27017
+      MONGOCLIENT_DEFAULT_CONNECTION_URL: mongodb://mongo:27017
+      MONGOCLIENT_AUTH: 'true'
+      MONGOCLIENT_USERNAME: ${MONGOCLIENT_USERNAME}
+      MONGOCLIENT_PASSWORD: ${MONGOCLIENT_PASSWORD}
+    networks:
+      - mongo-network
+
+networks:
+  mongo-network:
+    driver: bridge
+
+volumes:
+  dbmongo:
